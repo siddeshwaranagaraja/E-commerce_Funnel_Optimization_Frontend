@@ -44,6 +44,12 @@ def parse_dropoff_response(response):
         return None
     return response.get("data", {})
 
+def parse_stage_leakage_response(response):
+    """Parse stage leakage response."""
+    if "error" in response:
+        return None
+    return response.get("data", [])
+
 def parse_behavior_response(response):
     """Parse behavior insights response."""
     if "error" in response:
@@ -95,6 +101,13 @@ def get_dropoff_summary(filters=None):
     # Response parsing: parse_dropoff_response()
     response = _get("/dropoff/summary", params=filters)
     return parse_dropoff_response(response)
+
+def get_stage_leakage(filters=None):
+    """Fetch stage leakage data (user loss between funnel stages)."""
+    # Request: GET /dropoff/stage-leakage?date_range=...&device=...
+    # Response parsing: parse_stage_leakage_response()
+    response = _get("/dropoff/stage-leakage", params=filters)
+    return parse_stage_leakage_response(response)
 
 def get_behavior_summary(filters=None):
     """Fetch user behavior insights."""
