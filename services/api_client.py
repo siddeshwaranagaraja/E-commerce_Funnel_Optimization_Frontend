@@ -56,6 +56,12 @@ def parse_behavior_response(response):
         return None
     return response.get("data", {})
 
+def parse_abandonment_response(response):
+    """Parse abandonment summary response."""
+    if "error" in response:
+        return None
+    return response.get("data", {})
+
 def parse_experiments_response(response):
     """Parse experiments response."""
     if "error" in response:
@@ -115,6 +121,13 @@ def get_behavior_summary(filters=None):
     # Response parsing: parse_behavior_response()
     response = _get("/behavior/summary", params=filters)
     return parse_behavior_response(response)
+
+def get_abandonment_summary(filters=None):
+    """Fetch abandonment summary data (cart/checkout abandonment patterns)."""
+    # Request: GET /behavior/abandonment?date_range=...&device=...
+    # Response parsing: parse_abandonment_response()
+    response = _get("/behavior/abandonment", params=filters)
+    return parse_abandonment_response(response)
 
 def get_experiments(status=None):
     """Fetch A/B testing experiments."""
