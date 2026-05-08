@@ -88,3 +88,36 @@ def render_segment_comparison_table(data: Dict[str, List[Dict]], segment_type: s
         "sortable": True,
         "filterable": True,
     }
+
+
+def render_behavior_pattern_table(data: List[Dict]):
+    """
+    Render behavior pattern summary table.
+    Expected payload: [{"pattern": str, "user_count": int, "avg_sessions": float,
+                        "conversion_rate": float, "dominant_device": str, "trend": str}]
+    """
+    if not data:
+        return {"type": "error", "message": "No behavior pattern data available"}
+
+    table_data = []
+    for row in data:
+        conversion_rate = row.get("conversion_rate", 0)
+        table_data.append({
+            "pattern": row.get("pattern", ""),
+            "user_count": row.get("user_count", 0),
+            "avg_sessions": f"{row.get('avg_sessions', 0):.1f}",
+            "conversion_rate": f"{conversion_rate:.2f}%",
+            "dominant_device": row.get("dominant_device", "N/A"),
+            "trend": row.get("trend", "stable")
+        })
+
+    return {
+        "type": "table",
+        "columns": ["pattern", "user_count", "avg_sessions", "conversion_rate", "dominant_device", "trend"],
+        "data": table_data,
+        "sortable": True,
+        "filterable": True,
+        "row_styles": {
+            "trend": lambda t: "positive" if t == "up" else "negative" if t == "down" else "neutral"
+        }
+    }
