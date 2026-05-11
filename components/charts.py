@@ -18,23 +18,56 @@ def render_funnel_chart(data: dict):
         }
     }
 
-def render_trend_chart(data: List[Dict], x_col: str, y_col: str):
+def render_trend_chart(data: List[Dict], x_col: str = "date", y_cols: List[str] = None):
     """
     Render trend chart with time-series data.
     Expected payload: [{"date": str, "browse": int, "cart": int, "checkout": int, "purchase": int}]
     """
-    # placeholder: implement trend chart rendering
-    return {
-        "type": "scatter",
-        "data": data,
-        "x_column": x_col,
-        "y_column": y_col,
-        "layout": {
-            "title": "Funnel Metrics Trend",
-            "xaxis": {"title": x_col},
-            "yaxis": {"title": y_col},
-        }
+    if not data:
+        return {"type": "error", "message": "No trend data available"}
+    
+    # Default to all funnel stages if y_cols not specified
+    if not y_cols:
+        y_cols = ["browse", "cart", "checkout", "purchase"]
+    
+    # Ensure x_col exists in data
+    if not all(x_col in row for row in data):
+        return {"type": "error", "message": f"Column '{x_col}' not found in data"}
+    
+    # Extract date and metric values
+    chart_data = []
+    for row in data:
+        chart_row = {x_col: row.get(x_col, "")}
+        for y_col in y_cols:
+            if y_col in row:
+                chart_row[y_col] = row.get(y_col, 0)
+        chart_data.append(chart_row)
+    
+    # Define colors for different stages
+    stage_colors = {
+        "browse": "#636EFA",
+        "cart": "#EF553B",
+        "checkout": "#00CC96",
+        "purchase": "#AB63FA"
     }
+    
+    colors = [stage_colors.get(col, "#999999") for col in y_cols]
+    
+    return {
+        "type": "line",
+        "data": chart_data,
+        "x_column": x_col,
+        "y_columns": y_cols,
+        "layout": {
+            "title": "Funnel Metrics Trend Over Time",
+            "xaxis": {"title": x_col.capitalize()},
+            "yaxis": {"title": "User Count"},
+            "hovermode": "x unified"
+        },
+        "colors": colors,
+        "line_mode": "lines+markers"
+    }
+
 
 def render_dropoff_chart(data: dict):
     """

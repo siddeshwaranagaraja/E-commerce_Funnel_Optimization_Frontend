@@ -101,6 +101,20 @@ def get_trend_data(filters=None):
     response = _get("/funnel/trends", params=filters)
     return parse_trend_response(response)
 
+def get_dropoff_trend(filters=None):
+    """Fetch dropoff trend data over time."""
+    # Request: GET /dropoff/trends?date_range=...&device=...
+    # Response parsing: parse_trend_response()
+    response = _get("/dropoff/trends", params=filters)
+    return parse_trend_response(response)
+
+def get_behavior_trend(filters=None):
+    """Fetch behavior metrics trend data over time."""
+    # Request: GET /behavior/trends?date_range=...&device=...
+    # Response parsing: parse_trend_response()
+    response = _get("/behavior/trends", params=filters)
+    return parse_trend_response(response)
+
 def get_dropoff_summary(filters=None):
     """Fetch drop-off analysis data."""
     # Request: GET /dropoff/summary?date_range=...&device=...
