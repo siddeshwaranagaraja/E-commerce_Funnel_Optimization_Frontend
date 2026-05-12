@@ -1,5 +1,6 @@
 import streamlit as st
 from services import api_client
+from components import charts
 
 def main():
     st.set_page_title("Funnel Overview")
@@ -70,7 +71,11 @@ def main():
     # Components: render_trend_chart(data, x_col='date', y_col='count')
     st.subheader("Trend Analysis")
     if trend_data:
-        st.json(trend_data)  # Placeholder display
+        chart_config = charts.render_trend_chart(trend_data, x_col="date", y_cols=["browse", "cart", "checkout", "purchase"])
+        if chart_config.get("type") != "error":
+            st.json(chart_config)  # Display chart configuration for rendering
+        else:
+            st.error(chart_config.get("message", "Error rendering trend chart"))
     else:
         st.info("Trend chart will be displayed here.")
 

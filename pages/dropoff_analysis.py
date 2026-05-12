@@ -1,5 +1,6 @@
 import streamlit as st
 from services import api_client
+from components import charts
 
 def main():
     st.set_page_title("Drop-off Analysis")
@@ -20,6 +21,7 @@ def main():
     # Fetch dropoff summary and stage leakage data
     dropoff_data = api_client.get_dropoff_summary(filters=filters)
     leakage_data = api_client.get_stage_leakage(filters=filters)
+    dropoff_trend_data = api_client.get_dropoff_trend(filters=filters)
 
     # Stage comparison chart placeholder
     # Layout: bar chart comparing drop-off rates across stages
@@ -44,5 +46,18 @@ def main():
     st.subheader("Device Analysis")
     st.info("Device segment filter and analysis will be displayed here.")
 
+    # Trend comparison section
+    # Layout: time-series chart showing dropoff rate trends
+    st.subheader("Dropoff Trend Analysis")
+    if dropoff_trend_data:
+        trend_config = charts.render_trend_chart(dropoff_trend_data, x_col="date", y_cols=["dropoff_rate"])
+        if trend_config.get("type") != "error":
+            st.json(trend_config)  # Display trend chart configuration
+        else:
+            st.error(trend_config.get("message", "Error rendering trend chart"))
+    else:
+        st.info("Dropoff trend chart will be displayed here.")
+
 if __name__ == "__main__":
     main()
+
