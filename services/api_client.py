@@ -62,6 +62,18 @@ def parse_abandonment_response(response):
         return None
     return response.get("data", {})
 
+def parse_insight_summary_response(response):
+    """Parse insight summary response."""
+    if "error" in response:
+        return None
+    return response.get("data", [])
+
+def parse_insight_detail_response(response):
+    """Parse insight detail response."""
+    if "error" in response:
+        return None
+    return response.get("data", {})
+
 def parse_experiments_response(response):
     """Parse experiments response."""
     if "error" in response:
@@ -142,6 +154,20 @@ def get_abandonment_summary(filters=None):
     # Response parsing: parse_abandonment_response()
     response = _get("/behavior/abandonment", params=filters)
     return parse_abandonment_response(response)
+
+def get_insight_summary(filters=None):
+    """Fetch insight summary data (behavioral insights and alerts)."""
+    # Request: GET /insights/summary?date_range=...&device=...
+    # Response parsing: parse_insight_summary_response()
+    response = _get("/insights/summary", params=filters)
+    return parse_insight_summary_response(response)
+
+def get_insight_detail(insight_id: str):
+    """Fetch detailed insight information by ID."""
+    # Request: GET /insights/{insight_id}
+    # Response parsing: parse_insight_detail_response()
+    response = _get(f"/insights/{insight_id}")
+    return parse_insight_detail_response(response)
 
 def get_experiments(status=None):
     """Fetch A/B testing experiments."""
