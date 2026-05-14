@@ -75,6 +75,29 @@ def main():
     else:
         st.info("Behavioral insights list will be displayed here.")
 
+    # Insight summary table
+    # Layout: table with stage, issue, severity, impact, and recommendation columns
+    st.subheader("Insight Summary Table")
+    if insights_data and isinstance(insights_data, list) and len(insights_data) > 0:
+        # Transform insights data for table display
+        insight_table_data = [
+            {
+                "stage": insight.get("stage", "N/A"),
+                "issue": insight.get("title", "N/A"),
+                "severity": insight.get("severity", "info"),
+                "impact": insight.get("impact", 0),
+                "recommendation": insight.get("recommendation", "")
+            }
+            for insight in insights_data
+        ]
+        insight_table_config = tables.render_insight_summary_table(insight_table_data)
+        if insight_table_config.get("type") != "error":
+            st.json(insight_table_config)  # Display table configuration
+        else:
+            st.error(insight_table_config.get("message", "Error rendering insight table"))
+    else:
+        st.info("Insight summary table will be displayed here.")
+
 if __name__ == "__main__":
     main()
 

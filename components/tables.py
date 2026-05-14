@@ -121,3 +121,35 @@ def render_behavior_pattern_table(data: List[Dict]):
             "trend": lambda t: "positive" if t == "up" else "negative" if t == "down" else "neutral"
         }
     }
+
+
+def render_insight_summary_table(data: List[Dict]):
+    """
+    Render insight summary table.
+    Expected payload: [{"stage": str, "issue": str, "severity": str, "recommendation": str, "impact": float}]
+    """
+    if not data:
+        return {"type": "error", "message": "No insight data available"}
+
+    table_data = []
+    for row in data:
+        impact = row.get("impact", 0)
+        table_data.append({
+            "stage": row.get("stage", ""),
+            "issue": row.get("issue", ""),
+            "severity": row.get("severity", "info").upper(),
+            "impact": f"{impact:.1f}%",
+            "recommendation": row.get("recommendation", "")[:50] + ".." if len(row.get("recommendation", "")) > 50 else row.get("recommendation", "")
+        })
+
+    return {
+        "type": "table",
+        "columns": ["stage", "issue", "severity", "impact", "recommendation"],
+        "data": table_data,
+        "sortable": True,
+        "filterable": True,
+        "row_styles": {
+            "severity": lambda sev: "critical" if sev == "CRITICAL" else "warning" if sev == "WARNING" else "info"
+        }
+    }
+
